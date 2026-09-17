@@ -1,4 +1,5 @@
 <script setup>
+definePageMeta({ layout: 'labs' })
 import AnchorTag from '~/labs/lab1/AnchorTag.vue'
 import Forms from '~/labs/lab1/forms/Forms.vue'
 import HeadingTags from '~/labs/lab1/HeadingTags.vue'

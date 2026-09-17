@@ -1,3 +1,6 @@
+<script setup>
+definePageMeta({ layout: 'labs' })
+</script>
 <template>
   <div id="wd-labs">
     <h1>Labs</h1>
@@ -10,6 +13,12 @@
       </li>
       <li>
         <NuxtLink to="/labs/lab3">Lab 3: JavaScript Fundamentals</NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/labs/lab4">Lab 4: ?</NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/">Kambaz</NuxtLink>
       </li>
     </ul>
     <NuxtPage />
