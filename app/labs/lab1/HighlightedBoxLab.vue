@@ -26,5 +26,13 @@ import HighlightedBox from './HighlightedBox.vue'
         <li>Have fun</li>
       </ul>
     </HighlightedBox>
+    <HighlightedBox backgroundColor="honeydew" borderColor="seagreen">
+      <h4>Sample nested content</h4>
+      <ul>
+        <li>p</li>
+        <li>table</li>
+        <li>form</li>
+      </ul>
+    </HighlightedBox>
   </div>
 </template>

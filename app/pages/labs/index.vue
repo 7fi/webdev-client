@@ -15,7 +15,10 @@ definePageMeta({ layout: 'labs' })
         <NuxtLink to="/labs/lab3">Lab 3: JavaScript Fundamentals</NuxtLink>
       </li>
       <li>
-        <NuxtLink to="/labs/lab4">Lab 4: ?</NuxtLink>
+        <NuxtLink id="wd-lab4-link" to="/labs/lab4">Lab 4: ?</NuxtLink>
+      </li>
+      <li>
+        <NuxtLink to="/labs/lab5">Lab 5: ?</NuxtLink>
       </li>
       <li>
         <NuxtLink to="/">Kambaz</NuxtLink>

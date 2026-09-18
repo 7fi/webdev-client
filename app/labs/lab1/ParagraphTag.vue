@@ -7,5 +7,6 @@
     <p id="wd-p-4">This is the third paragraph. Wrap each paragraph with the paragraph tag to tell browsers to render the gaps.</p>
     <p id="wd-p-your-1">I'm from Bainbridge Island Washington near Seattle.</p>
     <p id="wd-p-your-2">I'm hoping to learn more about React and potentially Vue and working in a professional manner.</p>
+    <p id="wd-ai-p">Wrapping text in a paragraph tag creates vertical spacing because browsers apply default margin above and below each paragraph element. Without that tag, adjacent lines of text collapse into a single block with no visual separation between them.</p>
   </div>
 </template>

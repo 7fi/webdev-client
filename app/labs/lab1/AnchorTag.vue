@@ -8,4 +8,6 @@
   <a href="https://crowsnest.club" id="wd-your-link"> My biggest project </a>
   <br />
   <a href="https://github.com/7fi" target="_blank" rel="noreferrer" id="wd-your-github"> My Github </a>
+  <br />
+  <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/table" id="wd-ai-link"> MDN: table element </a>
 </template>

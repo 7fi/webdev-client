@@ -9,5 +9,6 @@ import HighlightedParagraph from './HighlightedParagraph.vue'
     <HighlightedParagraph text="Custom props: light blue background, navy border, thicker width, more rounding." background-color="lightblue" border-color="navy" border-width="4px" border-radius="16px" />
     <HighlightedParagraph text="Another variation: misty rose background, crimson border, square corners." background-color="#ffe4e1" border-color="crimson" border-width="3px" border-radius="0px" />
     <HighlightedParagraph text="I'm the captain of the northeastern sailing team!" background-color="#ccffee" border-color="#33ffcc" border-width="3px" border-radius="3px" />
+    <HighlightedParagraph text="Props let the same component render with different colors." background-color="lavender" border-color="purple" border-width="3px" border-radius="12px" />
   </div>
 </template>
