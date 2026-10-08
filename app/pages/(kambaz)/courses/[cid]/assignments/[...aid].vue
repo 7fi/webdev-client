@@ -73,9 +73,9 @@ definePageMeta({ layout: 'course' })
             <label> Until: <input type="date" id="wd-available-until" /> </label>
           </td>
         </tr>
-        <hr />
         <tr>
           <td align="right">
+            <hr />
             <NuxtLink to="./"><button id="wd-cancel">Cancel</button></NuxtLink>
             <NuxtLink to="./"><button id="wd-save">Save</button></NuxtLink>
           </td>
