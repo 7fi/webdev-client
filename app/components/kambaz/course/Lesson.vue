@@ -2,9 +2,9 @@
 defineProps<{ title: string }>()
 </script>
 <template>
-  <li className="wd-lesson">
-    <span className="wd-title">{{ title }}</span>
-    <ul className="wd-content">
+  <li class="wd-lesson">
+    <span class="wd-title">{{ title }}</span>
+    <ul class="wd-content">
       <slot />
     </ul>
   </li>

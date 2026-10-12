@@ -13,6 +13,7 @@ import Margins from '~/labs/lab2/Margins.vue'
 import MediaQueriesDemo from '~/labs/lab2/MediaQueriesDemo.vue'
 import Padding from '~/labs/lab2/Padding.vue'
 import Positions from '~/labs/lab2/Positions.vue'
+import ReactIconsSampler from '~/labs/lab2/ReactIconsSampler.vue'
 import ZIndex from '~/labs/lab2/ZIndex.vue'
 
 definePageMeta({ layout: 'labs' })
@@ -20,6 +21,9 @@ definePageMeta({ layout: 'labs' })
 <template>
   <div id="wd-lab2">
     <h2>Lab 2 - Cascading Style Sheets</h2>
+    <p>
+      <a href="/labs/lab2/tailwind">Open Tailwind CSS lab →</a>
+    </p>
     <h3>Styling with the STYLE attribute</h3>
     <p>Style attribute allows configuring look and feel on the element. Although its very convenient it is considered bad practice and you should avoid using the style attribute.</p>
 
@@ -35,28 +39,28 @@ definePageMeta({ layout: 'labs' })
     </div>
     <div id="wd-css-class-selectors">
       <h3>Class selectors</h3>
-      <p className="wd-class-selector">Instead of using IDs to refer to elements, you can use an element's CLASS attribute</p>
-      <h4 className="wd-class-selector">This heading has same style as paragraph above</h4>
+      <p class="wd-class-selector">Instead of using IDs to refer to elements, you can use an element's CLASS attribute</p>
+      <h4 class="wd-class-selector">This heading has same style as paragraph above</h4>
       <p class="wd-ai-class-selector">This paragraph is styled by the wd-ai-class-selector class with a maroon background and white text</p>
       <h4 class="wd-ai-class-selector">This heading shares the same class and style as the paragraph above</h4>
-      <p className="wd-your-class">Instead of using IDs to refer to elements, you can use an element's CLASS attribute</p>
-      <h4 className="wd-your-class">This heading has same style as paragraph above</h4>
+      <p class="wd-your-class">Instead of using IDs to refer to elements, you can use an element's CLASS attribute</p>
+      <h4 class="wd-your-class">This heading has same style as paragraph above</h4>
     </div>
 
     <div id="wd-css-document-structure">
-      <div className="wd-selector-1">
+      <div class="wd-selector-1">
         <h3>Document structure selectors</h3>
-        <div className="wd-selector-2">
+        <div class="wd-selector-2">
           Selectors can be combined to refer elements in particular places in the document
-          <p className="wd-selector-3">
+          <p class="wd-selector-3">
             This paragraph's red background is referenced as
             <br />
             .selector-2 .selector3
             <br />
             meaning the descendant of some ancestor.
             <br />
-            <span className="wd-selector-4"> Whereas this span is a direct child of its parent </span>
-            <span className="wd-selector-6"> Whereas this span is a direct child of its parent </span>
+            <span class="wd-selector-4"> Whereas this span is a direct child of its parent </span>
+            <span class="wd-selector-6"> Whereas this span is a direct child of its parent </span>
             <br />
             <span class="wd-ai-selector-5"> This span is matched as a descendant of .wd-selector-1 </span>
             <br />
@@ -85,5 +89,6 @@ definePageMeta({ layout: 'labs' })
     <GridLayout />
     <Flex />
     <MediaQueriesDemo />
+    <ReactIconsSampler />
   </div>
 </template>

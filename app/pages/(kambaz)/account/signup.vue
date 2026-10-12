@@ -4,11 +4,11 @@ definePageMeta({ layout: 'accounts' })
 <template>
   <div id="wd-signup-screen">
     <h3>Sign up</h3>
-    <input placeholder="username" className="wd-username" defaultValue="ada" />
+    <input placeholder="username" class="wd-username" defaultValue="ada" />
     <br />
-    <input placeholder="password" type="password" className="wd-password" defaultValue="123" />
+    <input placeholder="password" type="password" class="wd-password" defaultValue="123" />
     <br />
-    <input placeholder="verify password" type="password" className="wd-password-verify" />
+    <input placeholder="verify password" type="password" class="wd-password-verify" />
     <br />
     <NuxtLink to="/account/profile">Sign up</NuxtLink>
     <br />

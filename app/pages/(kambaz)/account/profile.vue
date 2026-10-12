@@ -5,9 +5,9 @@ definePageMeta({ layout: 'accounts' })
 <template>
   <div id="wd-profile-screen">
     <h3>Profile</h3>
-    <input defaultValue="alice" placeholder="username" className="wd-username" />
+    <input defaultValue="alice" placeholder="username" class="wd-username" />
     <br />
-    <input defaultValue="123" placeholder="password" type="password" className="wd-password" />
+    <input defaultValue="123" placeholder="password" type="password" class="wd-password" />
     <br />
     <input defaultValue="Alice" placeholder="First Name" id="wd-firstname" />
     <br />
