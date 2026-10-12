@@ -52,11 +52,11 @@
     background-color: navy;
     color: white;
   }
-  h3 {
+  h4 {
     background-color: #555;
     color: #fff;
   }
-  h3 {
+  h4 {
     background-color: #333;
     color: #fff;
   }
@@ -84,6 +84,7 @@
   .wd-fg-color-green {
     color: green;
   }
+
   .wd-bg-color-yellow {
     background-color: #ffff07;
   }

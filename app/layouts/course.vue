@@ -10,16 +10,12 @@ const cid = computed(() => route.params.cid as string)
     <div id="wd-courses">
       <h2>Courses {{ cid }}</h2>
       <hr />
-      <table>
-        <tbody>
-          <tr>
-            <td valign="top" width="200">
-              <CourseNavigation :cid="cid" />
-            </td>
-            <td valign="top" width="100%"><slot /></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="flex gap-4">
+        <div class="hidden w-[140px] shrink-0 md:block">
+          <CourseNavigation :cid="cid" />
+        </div>
+        <div class="min-w-0 flex-1"><slot /></div>
+      </div>
     </div>
   </NuxtLayout>
 </template>

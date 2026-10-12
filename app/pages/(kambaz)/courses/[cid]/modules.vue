@@ -7,11 +7,14 @@ definePageMeta({ layout: 'course' })
 
 <template>
   <div>
-    <button>Collapse All</button> <button>View Progress</button>
-    <select defaultValue="publish-all">
-      <option value="publish-all">Publish All</option>
-    </select>
-    <button>+ Module</button>
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <button type="button" class="rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm">Collapse All</button>
+      <button type="button" class="rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm">View Progress</button>
+      <select defaultValue="publish-all" class="rounded border border-neutral-300 bg-white px-3 py-1.5 text-sm">
+        <option value="publish-all">Publish All</option>
+      </select>
+      <button type="button" class="rounded border border-red-600 bg-red-600 px-3 py-1.5 text-sm font-medium text-white">+ Module</button>
+    </div>
     <ul id="wd-modules">
       <Module title="Week 1, Lecture 1 - Course Introduction, Syllabus, Agenda">
         <Lesson title="LEARNING OBJECTIVES">
@@ -28,8 +31,17 @@ definePageMeta({ layout: 'course' })
           <li class="wd-content-item">Creating a React Application</li>
         </Lesson>
       </Module>
-      <Module title="Week 2"><!--Expand lessons on your own --> </Module>
+      <Module title="Week 2"
+        ><Lesson title="SLIDES">
+          <li class="wd-content-item">Introduction to Web Development</li>
+          <li class="wd-content-item">Creating an HTTP server with Node.js</li>
+          <li class="wd-content-item">Creating a React Application</li>
+        </Lesson>
+      </Module>
       <Module title="Week 3" />
+      <Module title="Sample module (AI)">
+        <Lesson title="Sample lesson (AI)" />
+      </Module>
     </ul>
   </div>
 </template>

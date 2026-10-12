@@ -4,6 +4,8 @@ definePageMeta({ layout: 'labs' })
 <template>
   <div id="wd-labs">
     <h1>Labs</h1>
+    <h2>Carter Anderson</h2>
+    <a href="https://github.com/7fi/webdev-client">github</a>
     <ul>
       <li>
         <NuxtLink to="/labs/lab1">Lab 1: HTML Examples</NuxtLink>
