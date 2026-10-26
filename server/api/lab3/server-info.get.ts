@@ -1,16 +1,14 @@
-import fs from 'node:fs'
-import path from 'node:path'
-
-export default defineEventHandler(() => {
+export default defineEventHandler(async () => {
   const platform = process.platform
   const nodeVersion = process.version
   const arch = process.arch
   const pid = process.pid
   const serverRenderTime = new Date().toLocaleTimeString()
-  const lab3Dir = path.join(process.cwd(), 'app/labs/lab3')
   let files: string[] = []
   try {
-    files = fs.readdirSync(lab3Dir)
+    // Keys are paths with ':' separators (e.g. 'todos:TodoList.vue'); keep the top level like readdirSync.
+    const keys = await useStorage('assets:lab3').getKeys()
+    files = [...new Set(keys.map((key) => key.split(':')[0]!))].sort()
   } catch (error) {
     console.error('Error reading lab3 directory:', error)
     files = []
