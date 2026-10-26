@@ -1,0 +1,26 @@
+<script setup lang="ts">
+type House = {
+  bedrooms: number
+  address?: { street: string; city: string; zip?: string }
+  garage?: { cars: number }
+}
+
+const house: House = {
+  bedrooms: 4,
+  address: {
+    street: 'Via Roma',
+    city: 'Roma',
+  },
+}
+const missing = undefined as { prop?: string } | undefined
+</script>
+<template>
+  <div id="wd-optional-chaining">
+    <h4>Optional Chaining</h4>
+    house.address?.city = {{ house.address?.city }}<br />
+    missing?.prop ?? "n/a" = {{ missing?.prop ?? 'n/a' }}<br />
+    house.garage?.cars ?? 0 = {{ house.garage?.cars ?? 0 }}<br />
+    house.address?.zip ?? "unknown" = {{ house.address?.zip ?? 'unknown' }}
+    <hr />
+  </div>
+</template>

@@ -1,0 +1,31 @@
+<script setup lang="ts">
+type User = {
+  username: string
+  email?: string
+  address?: { city: string }
+}
+
+function describe(value: string | number | null): string {
+  if (value === null) return 'nothing'
+  if (typeof value === 'number') return `the number ${value.toFixed(1)}`
+  return `the text "${value.toUpperCase()}"`
+}
+
+const alice: User = { username: 'alice', address: { city: 'Boston' } }
+const bob: User = { username: 'bob' }
+const nickname: string | undefined = undefined
+const nicknameDisplay = nickname ?? 'none'
+</script>
+
+<template>
+  <div id="wd-narrowing">
+    <h4>Null, Undefined, and Narrowing</h4>
+    describe(null) = {{ describe(null) }} <br />
+    describe(7) = {{ describe(7) }} <br />
+    describe("hi") = {{ describe('hi') }} <br />
+    alice.address?.city = {{ alice.address?.city }} <br />
+    bob.address?.city ?? "unknown" = {{ bob.address?.city ?? 'unknown' }} <br />
+    nickname ?? "none" = {{ nicknameDisplay }}
+    <hr />
+  </div>
+</template>

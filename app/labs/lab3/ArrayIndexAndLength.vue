@@ -1,0 +1,18 @@
+<script setup lang="ts">
+let numberArray1 = [1, 2, 3, 4, 5]
+const length1 = numberArray1.length
+const index1 = numberArray1.indexOf(3)
+const index9 = numberArray1.indexOf(9)
+const indexOf1 = numberArray1.indexOf(1)
+</script>
+<template>
+  <div id="wd-array-index-and-length">
+    <h4>Array index and length</h4>
+    length1 = {{ length1 }} <br />
+    index1 = {{ index1 }} <br />
+    index9 = {{ index9 }} <br />
+    indexOf1 = {{ indexOf1 }} <br />
+
+    <hr />
+  </div>
+</template>
