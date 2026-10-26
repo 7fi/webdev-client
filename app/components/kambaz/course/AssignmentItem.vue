@@ -5,13 +5,13 @@ defineProps<{ cid: string; aid: string; title: string; details: string }>()
 </script>
 
 <template>
-  <li className="wd-assignment-list-item mb-3 flex gap-3 border border-neutral-300 border-l-[3px] border-l-green-600 bg-white p-3">
-    <FaFileAlt className="mt-1 shrink-0 text-xl text-green-700" />
+  <li class="wd-assignment-list-item mb-3 flex gap-3 border border-neutral-300 border-l-[3px] border-l-green-600 bg-white p-3">
+    <FaFileAlt class="mt-1 shrink-0 text-xl text-green-700" />
     <div>
-      <NuxtLink :to="`/courses/${cid}/assignments/${aid}`" className="wd-assignment-link font-semibold text-neutral-900 no-underline">
+      <NuxtLink :to="`/courses/${cid}/assignments/${aid}`" class="wd-assignment-link font-semibold text-neutral-900 no-underline">
         {{ title }}
       </NuxtLink>
-      <div className="mt-1 text-sm text-neutral-600">{{ details }}</div>
+      <div class="mt-1 text-sm text-neutral-600">{{ details }}</div>
     </div>
   </li>
 </template>

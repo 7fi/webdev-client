@@ -1,7 +1,15 @@
 <script setup lang="ts">
 import { FaUserCircle } from 'vue3-icons/fa'
+import * as db from '~/kambaz/database'
 
 definePageMeta({ layout: 'course' })
+
+const route = useRoute()
+const cid = computed(() => route.params.cid as string)
+const { users, enrollments } = db
+const enrolled = computed(() =>
+  users.filter((usr) => enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid.value)),
+)
 </script>
 <template>
   <div id="wd-people-table" class="overflow-x-auto">
@@ -17,115 +25,16 @@ definePageMeta({ layout: 'course' })
         </tr>
       </thead>
       <tbody>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Tony Stark
+        <tr v-for="user in enrolled" :key="user._id" class="odd:bg-neutral-50">
+          <td class="wd-full-name p-2 text-nowrap">
+            <FaUserCircle class="me-2 inline align-middle text-3xl text-neutral-500" />
+            <span class="wd-first-name">{{ user.firstName }}</span> <span class="wd-last-name">{{ user.lastName }}</span>
           </td>
-          <td class="p-2">001234561S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-10-01</td>
-          <td class="p-2">10:21:32</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Bruce Wayne
-          </td>
-          <td class="p-2">001234562S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-11-02</td>
-          <td class="p-2">23:32:23</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Steve Rogers
-          </td>
-          <td class="p-2">001234563S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-10-02</td>
-          <td class="p-2">13:21:32</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Natasha Romanoff
-          </td>
-          <td class="p-2">001234564S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">TA</td>
-          <td class="p-2">2020-11-05</td>
-          <td class="p-2">11:22:33</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Rick Roll
-          </td>
-          <td class="p-2">001234564S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-11-05</td>
-          <td class="p-2">11:22:33</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            John Doe
-          </td>
-          <td class="p-2">001234564S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-11-05</td>
-          <td class="p-2">11:22:33</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Jimmy
-          </td>
-          <td class="p-2">001234564S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-11-05</td>
-          <td class="p-2">11:22:33</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Jane Sample
-          </td>
-          <td class="p-2">009999991S</td>
-          <td class="p-2">S101</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-12-01</td>
-          <td class="p-2">08:15:42</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Alex Sample
-          </td>
-          <td class="p-2">009999992S</td>
-          <td class="p-2">S102</td>
-          <td class="p-2">STUDENT</td>
-          <td class="p-2">2020-12-03</td>
-          <td class="p-2">14:07:19</td>
-        </tr>
-        <tr class="odd:bg-neutral-50">
-          <td class="p-2 text-nowrap">
-            <FaUserCircle class="me-2 inline text-4xl text-neutral-500" />
-            Sam Sample
-          </td>
-          <td class="p-2">009999993S</td>
-          <td class="p-2">S102</td>
-          <td class="p-2">TA</td>
-          <td class="p-2">2020-12-05</td>
-          <td class="p-2">05:48:10</td>
+          <td class="wd-login-id p-2">{{ user.loginId }}</td>
+          <td class="wd-section p-2">{{ user.section }}</td>
+          <td class="wd-role p-2">{{ user.role }}</td>
+          <td class="wd-last-activity p-2">{{ user.lastActivity }}</td>
+          <td class="wd-total-activity p-2">{{ user.totalActivity }}</td>
         </tr>
       </tbody>
     </table>
