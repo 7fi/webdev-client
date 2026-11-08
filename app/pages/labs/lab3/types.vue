@@ -14,7 +14,7 @@ definePageMeta({ layout: 'labs' })
 </script>
 
 <template>
-  <div id="wd-lab3-types" className="p-4">
+  <div id="wd-lab3-types" class="p-4">
     <h2>TypeScript Types</h2>
     <TypeAnnotations />
     <ObjectTypes />
