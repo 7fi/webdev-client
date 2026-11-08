@@ -15,6 +15,8 @@ import PropDrilling from '~/labs/lab4/PropDrilling.vue'
 import ContextCounterExamples from '~/labs/lab4/context/ContextCounterExamples.vue'
 import ContextProfileForm from '~/labs/lab4/context/ContextProfileForm.vue'
 import PiniaExamples from '~/labs/lab4/pinia/PiniaExamples.vue'
+import ReduxExamples from '~/labs/lab4/redux/ReduxExamples.vue'
+import Effect from '~/labs/lab4/Effect.vue'
 
 definePageMeta({ layout: 'labs' })
 
@@ -41,5 +43,7 @@ const sampleFunction = () => alert('Sample from parent')
     <ContextCounterExamples />
     <ContextProfileForm />
     <PiniaExamples />
+    <ReduxExamples />
+    <Effect />
   </div>
 </template>
