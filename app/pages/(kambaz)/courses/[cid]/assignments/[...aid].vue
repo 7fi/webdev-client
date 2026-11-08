@@ -16,7 +16,8 @@ const isNew = computed(() => aid.value === 'new')
 
 const store = useAssignmentsStore()
 const { currentUser } = useAccountContext()
-const isFaculty = computed(() => currentUser.value?.role === 'FACULTY')
+// Signed-in non-faculty get a read-only form; signed-out visitors can edit (see the list page)
+const isFaculty = computed(() => !currentUser.value || currentUser.value.role === 'FACULTY')
 
 // The form edits a local copy; the store only changes on Save
 const draft = ref<Assignment | null>(null)

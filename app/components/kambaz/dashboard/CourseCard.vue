@@ -23,10 +23,13 @@ function toggleEnrollment() {
   else enrollments.enroll(currentUser.value._id, props.course._id)
 }
 
-// Only enrolled users may open the course; everyone else stays on the Dashboard.
-// This runs before the NuxtLink's own click handler, so preventDefault stops the navigation.
+// Same rule as the course layout: signed-out visitors can open any course,
+// a signed-in user only the ones they're enrolled in
+const canOpen = computed(() => !currentUser.value || enrolled.value)
+
+// Runs before the NuxtLink's own click handler, so preventDefault stops the navigation
 function guardNavigation(event: MouseEvent) {
-  if (!enrolled.value) event.preventDefault()
+  if (!canOpen.value) event.preventDefault()
 }
 </script>
 
@@ -35,7 +38,7 @@ function guardNavigation(event: MouseEvent) {
     <NuxtLink
       :to="`/courses/${course._id}/home`"
       class="wd-dashboard-course-link block text-neutral-900 no-underline"
-      :class="{ 'cursor-default': !enrolled }"
+      :class="{ 'cursor-default': !canOpen }"
     >
       <div @click="guardNavigation">
         <NuxtImg :src="course.image" width="300" height="160" :alt="course.name" class="h-40 w-full object-cover" />
@@ -44,7 +47,7 @@ function guardNavigation(event: MouseEvent) {
           <p class="wd-dashboard-course-description m-0 mb-3 h-[100px] overflow-hidden text-sm text-neutral-600">{{ course.description }}</p>
           <div class="flex flex-wrap gap-2">
             <button
-              v-if="enrolled"
+              v-if="canOpen"
               type="button"
               class="inline-flex items-center justify-center rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white"
             >

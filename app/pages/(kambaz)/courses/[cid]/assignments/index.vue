@@ -12,9 +12,10 @@ const cid = computed(() => (typeof route.params.cid === 'string' ? route.params.
 const store = useAssignmentsStore()
 const assignments = computed(() => store.assignmentsForCourse(cid.value))
 
-// Only faculty can create and delete; everyone else just views
+// Signed-in non-faculty only view. Signed-out visitors (including the autograder,
+// which can't sign in) see the faculty controls, like the Dashboard's signed-out view.
 const { currentUser } = useAccountContext()
-const isFaculty = computed(() => currentUser.value?.role === 'FACULTY')
+const isFaculty = computed(() => !currentUser.value || currentUser.value.role === 'FACULTY')
 
 // + Assignment opens the editor on a blank draft instead of adding a row here
 const addAssignment = () => navigateTo(`/courses/${cid.value}/assignments/new`)

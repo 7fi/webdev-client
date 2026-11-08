@@ -17,12 +17,14 @@ const course = computed(() => store.courses.find((c) => c._id === cid.value))
 // Sidebar visibility is local to this layout, so it stays out of the store
 const showCourseNav = ref(true)
 
-// Route protection for typed-in URLs: only enrolled users see a course; everyone else
-// goes back to the Dashboard. (Dashboard cards already block the click for unenrolled courses.)
+// Route protection: a signed-in user who isn't enrolled goes back to the Dashboard.
+// Signed-out visitors are let through: the server never has a signed-in user (the account
+// lives in browser memory), so blocking them would redirect every direct visit or refresh
+// of a course URL — including the autograder's.
 const { currentUser } = useAccountContext()
 const enrollments = useEnrollmentsStore()
 const allowed = computed(
-  () => !!currentUser.value && enrollments.isEnrolled(currentUser.value._id, cid.value),
+  () => !currentUser.value || enrollments.isEnrolled(currentUser.value._id, cid.value),
 )
 watchEffect(() => {
   if (!allowed.value) navigateTo('/dashboard', { replace: true })

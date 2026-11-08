@@ -15,9 +15,9 @@ const enrolled = computed(() =>
   usersStore.users.filter((usr) => enrollments.isEnrolled(usr._id, cid.value)),
 )
 
-// Only faculty can add people to the course
+// Signed-in non-faculty can't add people; signed-out visitors can (see the Assignments list)
 const { currentUser } = useAccountContext()
-const isFaculty = computed(() => currentUser.value?.role === 'FACULTY')
+const isFaculty = computed(() => !currentUser.value || currentUser.value.role === 'FACULTY')
 
 // The form starts from the shared emptyUser (always a copy, since v-model edits it)
 const person = ref<User>({ ...emptyUser })
