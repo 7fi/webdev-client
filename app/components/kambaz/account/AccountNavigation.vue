@@ -1,11 +1,19 @@
 <script setup lang="ts">
-const route = useRoute()
+import { useAccountContext } from '~/kambaz/account/AccountContext'
 
-const navigationItems = [
+const route = useRoute()
+const { currentUser } = useAccountContext()
+
+const signedOutItems = [
   { label: 'Signin', href: '/account/signin', id: 'wd-account-signin-link' },
   { label: 'Signup', href: '/account/signup', id: 'wd-account-signup-link' },
+]
+const signedInItems = [
   { label: 'Profile', href: '/account/profile', id: 'wd-account-profile-link' },
 ]
+
+// Signed in: only Profile. Signed out: only Signin and Signup.
+const navigationItems = computed(() => (currentUser.value ? signedInItems : signedOutItems))
 
 const isActiveLink = (href: string) => route.path === href || route.path.startsWith(`${href}/`)
 </script>
