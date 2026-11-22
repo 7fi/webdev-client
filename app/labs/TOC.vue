@@ -25,15 +25,11 @@ const links = computed(() => LINKS.map((link) => ({ ...link, active: link.match(
 <template>
   <ul>
     <li v-for="link in links" :key="link.id">
-      <NuxtLink
-        :id="link.id"
-        :to="link.href"
-        :style="link.active ? activeStyle : undefined"
-        :aria-current="link.active ? 'page' : undefined"
-      >
+      <NuxtLink :id="link.id" :to="link.href" :style="link.active ? activeStyle : undefined" :aria-current="link.active ? 'page' : undefined">
         {{ link.label }}
       </NuxtLink>
     </li>
     <li><a href="https://carteranderson.dev" target="_blank" rel="noreferrer">Carter</a></li>
+    <li><a id="wd-github" href="https://github.com/7fi/webdev-server/tree/a5" target="_blank" rel="noreferrer">Server github</a></li>
   </ul>
 </template>
