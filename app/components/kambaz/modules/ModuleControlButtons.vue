@@ -6,6 +6,8 @@ import GreenCheckmark from './GreenCheckmark.vue'
 import { useModulesStore } from '~/kambaz/store/modulesStore'
 
 defineProps<{ moduleId: string }>()
+// Delete goes through the server on the Modules page; Edit only flips local UI state
+const emit = defineEmits<{ deleteModule: [moduleId: string] }>()
 
 const store = useModulesStore()
 </script>
@@ -20,7 +22,7 @@ const store = useModulesStore()
     <FaTrash
       class="cursor-pointer text-red-600"
       title="Delete module"
-      @click="store.deleteModule(moduleId)"
+      @click="emit('deleteModule', moduleId)"
     />
     <GreenCheckmark />
     <BsPlus class="text-3xl" />

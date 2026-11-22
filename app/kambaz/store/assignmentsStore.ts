@@ -1,9 +1,18 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import assignmentsJson from '../database/assignments.json'
 
-// The JSON fields, plus an optional "available until" date the editor can set
-export type Assignment = (typeof assignmentsJson)[number] & { until?: string }
+// Assignments live on the Express server; this store caches the current course's assignments.
+// `until` is an optional "available until" date the editor can set.
+export type Assignment = {
+  _id: string
+  title: string
+  course: string
+  description: string
+  points: number
+  due: string
+  available: string
+  until?: string
+}
 
 // Draft for the editor's "new assignment" form, scoped to a course
 export const emptyAssignment = (course: string): Assignment => ({
@@ -18,14 +27,16 @@ export const emptyAssignment = (course: string): Assignment => ({
 })
 
 export const useAssignmentsStore = defineStore('assignments', () => {
-  // Copy the seed so edits never touch the imported JSON module
-  const assignments = ref<Assignment[]>(assignmentsJson.map((a) => ({ ...a })))
+  // Empty until a page fetches a course's assignments
+  const assignments = ref<Assignment[]>([])
 
-  // Adds a copy with a fresh _id and returns it, so the caller knows the new id
+  // Replaces the cache with what the server returned
+  const setAssignments = (list: Assignment[]) => {
+    assignments.value = list
+  }
+  // Appends an assignment the server already created (it assigned the _id)
   const addAssignment = (assignment: Assignment) => {
-    const created = { ...assignment, _id: crypto.randomUUID() }
-    assignments.value = [...assignments.value, created]
-    return created
+    assignments.value = [...assignments.value, assignment]
   }
   const deleteAssignment = (assignmentId: string) => {
     assignments.value = assignments.value.filter((a) => a._id !== assignmentId)
@@ -44,6 +55,7 @@ export const useAssignmentsStore = defineStore('assignments', () => {
 
   return {
     assignments,
+    setAssignments,
     addAssignment,
     deleteAssignment,
     updateAssignment,

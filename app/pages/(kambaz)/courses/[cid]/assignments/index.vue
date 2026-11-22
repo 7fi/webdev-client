@@ -3,6 +3,7 @@ definePageMeta({ layout: 'course' })
 import { FaPlus, FaSearch } from 'vue3-icons/fa'
 import AssignmentItem from '~/components/kambaz/course/AssignmentItem.vue'
 import ConfirmDialog from '~/components/kambaz/ConfirmDialog.vue'
+import * as client from '~/kambaz/courses/client'
 import { useAssignmentsStore } from '~/kambaz/store/assignmentsStore'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
 
@@ -11,6 +12,17 @@ const cid = computed(() => (typeof route.params.cid === 'string' ? route.params.
 
 const store = useAssignmentsStore()
 const assignments = computed(() => store.assignmentsForCourse(cid.value))
+
+// The server is the source of truth; refill the cache whenever the course changes
+const loadAssignments = async () => {
+  try {
+    store.setAssignments(await client.findAssignmentsForCourse(cid.value))
+  } catch {
+    store.setAssignments([])
+  }
+}
+onMounted(loadAssignments)
+watch(cid, loadAssignments)
 
 // Signed-in non-faculty only view. Signed-out visitors (including the autograder,
 // which can't sign in) see the faculty controls, like the Dashboard's signed-out view.
@@ -25,9 +37,14 @@ const pendingDeleteId = ref<string | null>(null)
 const pendingDeleteTitle = computed(
   () => store.findAssignment(pendingDeleteId.value ?? '')?.title ?? 'this assignment',
 )
-function confirmDelete() {
-  if (pendingDeleteId.value) store.deleteAssignment(pendingDeleteId.value)
+const onDeleteAssignment = async (assignmentId: string) => {
+  await client.deleteAssignment(assignmentId)
+  store.deleteAssignment(assignmentId)
+}
+async function confirmDelete() {
+  const id = pendingDeleteId.value
   pendingDeleteId.value = null
+  if (id) await onDeleteAssignment(id)
 }
 
 const details = (a: { available: string; due: string; until?: string; points: number }) =>

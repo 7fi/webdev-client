@@ -1,8 +1,19 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import coursesJson from '../database/courses.json'
 
-export type Course = (typeof coursesJson)[number]
+// Courses live on the Express server; this store is only a client cache of what it returned
+export type Course = {
+  _id: string
+  name: string
+  number: string
+  startDate: string
+  endDate: string
+  term: string
+  department: string
+  credits: number
+  description: string
+  image: string
+}
 
 export const emptyCourse: Course = {
   _id: '0',
@@ -18,14 +29,16 @@ export const emptyCourse: Course = {
 }
 
 export const useCoursesStore = defineStore('courses', () => {
-  // Copy the seed so edits never touch the imported JSON module
-  const courses = ref<Course[]>(coursesJson.map((c) => ({ ...c })))
+  // Empty until a fetch fills it
+  const courses = ref<Course[]>([])
 
-  // Returns the new course so the caller can use its _id (e.g. to enroll its creator)
+  // Replaces the cache with what the server returned
+  const setCourses = (list: Course[]) => {
+    courses.value = list
+  }
+  // Appends a course the server already created (it assigned the _id)
   const addCourse = (course: Course) => {
-    const created = { ...emptyCourse, ...course, _id: crypto.randomUUID() }
-    courses.value = [...courses.value, created]
-    return created
+    courses.value = [...courses.value, course]
   }
   const deleteCourse = (courseId: string) => {
     courses.value = courses.value.filter((course) => course._id !== courseId)
@@ -34,5 +47,5 @@ export const useCoursesStore = defineStore('courses', () => {
     courses.value = courses.value.map((c) => (c._id === course._id ? { ...course } : c))
   }
 
-  return { courses, addCourse, deleteCourse, updateCourse }
+  return { courses, setCourses, addCourse, deleteCourse, updateCourse }
 })

@@ -5,6 +5,7 @@ import {
   type Assignment,
 } from '~/kambaz/store/assignmentsStore'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
+import * as client from '~/kambaz/courses/client'
 
 definePageMeta({ layout: 'course' })
 
@@ -19,34 +20,53 @@ const { currentUser } = useAccountContext()
 // Signed-in non-faculty get a read-only form; signed-out visitors can edit (see the list page)
 const isFaculty = computed(() => !currentUser.value || currentUser.value.role === 'FACULTY')
 
-// The form edits a local copy; the store only changes on Save
+// The form edits a local copy; the server and store only change on Save
 const draft = ref<Assignment | null>(null)
-watch(
-  aid,
-  () => {
-    if (isNew.value) {
-      draft.value = emptyAssignment(cid.value)
-      return
+// True until the draft is ready, so "not found" doesn't flash while a reload fetches
+const loading = ref(true)
+
+const loadDraft = async () => {
+  loading.value = true
+  if (isNew.value) {
+    draft.value = emptyAssignment(cid.value)
+    loading.value = false
+    return
+  }
+  // A reload or direct visit starts with an empty cache, so fetch the course's assignments first
+  if (!store.findAssignment(aid.value)) {
+    try {
+      store.setAssignments(await client.findAssignmentsForCourse(cid.value))
+    } catch {
+      // Server unreachable: falls through to "not found"
     }
-    const existing = store.findAssignment(aid.value)
-    draft.value = existing ? { until: '', ...existing } : null
-  },
-  { immediate: true },
-)
+  }
+  const existing = store.findAssignment(aid.value)
+  draft.value = existing ? { until: '', ...existing } : null
+  loading.value = false
+}
+onMounted(loadDraft)
+watch(aid, loadDraft)
 
 const backToList = () => navigateTo(`/courses/${cid.value}/assignments`)
 
-function save() {
+const save = async () => {
   if (!draft.value) return
-  if (isNew.value) store.addAssignment(draft.value)
-  else store.updateAssignment(draft.value)
+  if (isNew.value) {
+    const { _id, ...newAssignment } = draft.value
+    const created = await client.createAssignmentForCourse(cid.value, newAssignment)
+    store.addAssignment(created)
+  } else {
+    const saved = await client.updateAssignment(draft.value)
+    store.updateAssignment(saved)
+  }
   backToList()
 }
 </script>
 
 <template>
   <div id="wd-assignments-editor">
-    <p v-if="!draft">
+    <p v-if="loading">Loading…</p>
+    <p v-else-if="!draft">
       Assignment not found.
       <NuxtLink :to="`/courses/${cid}/assignments`">Back to Assignments</NuxtLink>
     </p>

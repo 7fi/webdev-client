@@ -4,6 +4,8 @@ import ModuleControlButtons from '../modules/ModuleControlButtons.vue'
 import { useModulesStore, type CourseModule } from '~/kambaz/store/modulesStore'
 
 defineProps<{ module: CourseModule }>()
+// Saving and deleting go through the server on the Modules page
+const emit = defineEmits<{ updateModule: [module: CourseModule]; deleteModule: [moduleId: string] }>()
 
 const store = useModulesStore()
 const inputValue = (e: Event) => (e.target as HTMLInputElement).value
@@ -17,11 +19,11 @@ const inputValue = (e: Event) => (e.target as HTMLInputElement).value
           class="w-1/2 rounded border border-neutral-300 px-2 py-1 text-base"
           :value="module.name"
           @input="store.updateModule({ ...module, name: inputValue($event) })"
-          @keydown.enter="store.updateModule({ ...module, editing: false })"
+          @keydown.enter="emit('updateModule', { ...module, editing: false })"
         />
         <template v-else>{{ module.name }}</template>
       </span>
-      <ModuleControlButtons :module-id="module._id" />
+      <ModuleControlButtons :module-id="module._id" @delete-module="(id) => emit('deleteModule', id)" />
     </div>
     <ul class="wd-lessons m-0 list-none p-0">
       <Lesson v-for="lesson in module.lessons" :key="lesson._id" :title="lesson.name" />

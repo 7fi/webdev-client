@@ -8,6 +8,10 @@ export default defineNuxtConfig({
   // Server-only; set with NUXT_LAB3_SERVER_MESSAGE. Keys under `public` would reach the browser.
   runtimeConfig: {
     lab3ServerMessage: '',
+    // Exposed to the browser; set with NUXT_PUBLIC_HTTP_SERVER.
+    public: {
+      httpServer: '',
+    },
   },
   // Source files aren't deployed with the server (e.g. on Vercel), so bundle
   // app/labs/lab3 into it for the Server Component Demo. Path is relative to server/.

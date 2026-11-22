@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as client from '~/kambaz/account/client'
 import { useAccountContext, type User } from '~/kambaz/account/AccountContext'
 
 definePageMeta({ layout: 'accounts' })
@@ -21,7 +22,14 @@ watch(
   { immediate: true },
 )
 
-function signout() {
+const updateProfile = async () => {
+  if (!profile.value) return
+  const user = await client.updateUser(profile.value)
+  setCurrentUser(user)
+}
+
+const signout = async () => {
+  await client.signout()
   setCurrentUser(null)
   navigateTo('/account/signin')
 }
@@ -73,6 +81,14 @@ function signout() {
       <option value="TA">Teaching Assistant</option>
       <option value="STUDENT">Student</option>
     </select>
+    <button
+      id="wd-update-profile-btn"
+      type="button"
+      class="mb-2 block w-full rounded bg-blue-600 px-3 py-2 text-center text-white"
+      @click="updateProfile"
+    >
+      Update
+    </button>
     <button
       id="wd-signout-btn"
       type="button"

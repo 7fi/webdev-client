@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import * as db from '~/kambaz/database'
+import axios from 'axios'
+import * as client from '~/kambaz/account/client'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
 
 definePageMeta({ layout: 'accounts' })
 
 const credentials = ref({ username: '', password: '' })
+const errorMessage = ref<string | null>(null)
 const { setCurrentUser } = useAccountContext()
 
-function signin() {
-  const user = db.users.find(
-    (u) =>
-      u.username === credentials.value.username && u.password === credentials.value.password,
-  )
-  // No match: stay on Sign in and don't write a user
-  if (!user) return
-  setCurrentUser(user)
-  navigateTo('/dashboard')
+const signin = async () => {
+  try {
+    const user = await client.signin(credentials.value)
+    setCurrentUser(user)
+    navigateTo('/dashboard')
+  } catch (error) {
+    // No match (401): stay on Sign in, don't write a user, and show the server's message
+    errorMessage.value = axios.isAxiosError(error) ? (error.response?.data?.message ?? error.message) : String(error)
+  }
 }
 </script>
 <template>
@@ -37,6 +39,9 @@ function signin() {
     />
     <label for="wd-ai-signin-note" class="mb-1 block text-sm font-medium">Sample note</label>
     <input id="wd-ai-signin-note" placeholder="sample note" class="mb-2 w-full rounded border border-neutral-300 px-3 py-2" />
+    <p v-if="errorMessage" id="wd-signin-error" class="mb-2 rounded bg-red-100 px-3 py-2 text-sm text-red-800">
+      {{ errorMessage }}
+    </p>
     <button
       id="wd-signin-btn"
       type="button"

@@ -1,29 +1,33 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import enrollmentsJson from '../database/enrollments.json'
 
-export type Enrollment = (typeof enrollmentsJson)[number]
+export type Enrollment = { _id: string; user: string; course: string }
 
-// Lives for the browser session: survives sign out / sign in, lost on a full reload
+// Enrollments live on the Express server; this store caches all of them
 export const useEnrollmentsStore = defineStore('enrollments', () => {
-  // Copy the seed so changes never touch the imported JSON module
-  const enrollments = ref<Enrollment[]>(enrollmentsJson.map((e) => ({ ...e })))
+  const enrollments = ref<Enrollment[]>([])
+  // False until the first fetch, so access checks can wait instead of treating "empty" as "not enrolled"
+  const loaded = ref(false)
+
+  // Replaces the cache with what the server returned
+  const setEnrollments = (list: Enrollment[]) => {
+    enrollments.value = list
+    loaded.value = true
+  }
 
   const isEnrolled = (userId: string, courseId: string) =>
     enrollments.value.some((e) => e.user === userId && e.course === courseId)
 
-  const enroll = (userId: string, courseId: string) => {
-    if (isEnrolled(userId, courseId)) return
-    enrollments.value = [
-      ...enrollments.value,
-      { _id: crypto.randomUUID(), user: userId, course: courseId },
-    ]
+  // Appends an enrollment the server already stored (it assigned the _id)
+  const addEnrollment = (enrollment: Enrollment) => {
+    if (isEnrolled(enrollment.user, enrollment.course)) return
+    enrollments.value = [...enrollments.value, enrollment]
   }
-  const unenroll = (userId: string, courseId: string) => {
+  const removeEnrollment = (userId: string, courseId: string) => {
     enrollments.value = enrollments.value.filter(
       (e) => !(e.user === userId && e.course === courseId),
     )
   }
 
-  return { enrollments, isEnrolled, enroll, unenroll }
+  return { enrollments, loaded, setEnrollments, isEnrolled, addEnrollment, removeEnrollment }
 })

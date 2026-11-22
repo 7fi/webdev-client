@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import ModuleEditor from './ModuleEditor.vue'
+
+// The Modules page owns the server call, so Add goes up as an event (React's addModule prop)
+const emit = defineEmits<{ addModule: [name: string] }>()
 </script>
 
 <template>
@@ -14,6 +17,6 @@ import ModuleEditor from './ModuleEditor.vue'
       <option value="publish-all">Publish All</option>
       <option value="unpublish-all">Unpublish All</option>
     </select>
-    <ModuleEditor />
+    <ModuleEditor @add-module="(name) => emit('addModule', name)" />
   </div>
 </template>

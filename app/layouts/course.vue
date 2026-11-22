@@ -2,6 +2,8 @@
 import { FaAlignJustify } from 'vue3-icons/fa6'
 import CourseNavigation from '~/components/kambaz/CourseNavigation.vue'
 import Breadcrumb from '~/components/kambaz/course/Breadcrumb.vue'
+import * as coursesClient from '~/kambaz/courses/client'
+import * as enrollmentsClient from '~/kambaz/enrollments/client'
 import { useCoursesStore } from '~/kambaz/store/coursesStore'
 import { useEnrollmentsStore } from '~/kambaz/store/enrollmentsStore'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
@@ -13,18 +15,38 @@ const cid = computed(() => (typeof route.params.cid === 'string' ? route.params.
 // Look the course up in the store, so courses added on the Dashboard have a name here too
 const store = useCoursesStore()
 const course = computed(() => store.courses.find((c) => c._id === cid.value))
+// The store is only filled by fetches, so a reload or direct visit to a course URL starts empty
+onMounted(async () => {
+  if (course.value) return
+  try {
+    store.setCourses(await coursesClient.fetchAllCourses())
+  } catch {
+    // Server unreachable: the page still renders, just without the course name
+  }
+})
 
 // Sidebar visibility is local to this layout, so it stays out of the store
 const showCourseNav = ref(true)
 
 // Route protection: a signed-in user who isn't enrolled goes back to the Dashboard.
-// Signed-out visitors are let through: the server never has a signed-in user (the account
-// lives in browser memory), so blocking them would redirect every direct visit or refresh
-// of a course URL — including the autograder's.
+// Signed-out visitors are let through, so direct visits to a course URL with no session
+// (including the autograder's) still render. Session restores currentUser before this matters.
 const { currentUser } = useAccountContext()
 const enrollments = useEnrollmentsStore()
+// Until the enrollments cache loads, an empty list would wrongly mean "not enrolled"
+onMounted(async () => {
+  if (enrollments.loaded) return
+  try {
+    enrollments.setEnrollments(await enrollmentsClient.fetchEnrollments())
+  } catch {
+    // Server unreachable: leave it unloaded, so nobody is redirected on a guess
+  }
+})
 const allowed = computed(
-  () => !currentUser.value || enrollments.isEnrolled(currentUser.value._id, cid.value),
+  () =>
+    !currentUser.value ||
+    !enrollments.loaded ||
+    enrollments.isEnrolled(currentUser.value._id, cid.value),
 )
 watchEffect(() => {
   if (!allowed.value) navigateTo('/dashboard', { replace: true })

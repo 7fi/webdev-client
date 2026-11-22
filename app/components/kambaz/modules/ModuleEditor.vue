@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { FaPlus } from 'vue3-icons/fa'
-import { useModulesStore } from '~/kambaz/store/modulesStore'
 
-const route = useRoute()
-const store = useModulesStore()
+const emit = defineEmits<{ addModule: [name: string] }>()
 
 // The dialog owns its own visibility and draft name
 const show = ref(false)
@@ -12,7 +10,7 @@ const moduleName = ref('')
 function addModule() {
   const name = moduleName.value.trim()
   if (!name) return
-  store.addModule({ name, course: String(route.params.cid) })
+  emit('addModule', name)
   moduleName.value = ''
   show.value = false
 }

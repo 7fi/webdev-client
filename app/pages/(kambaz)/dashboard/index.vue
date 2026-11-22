@@ -2,11 +2,13 @@
 definePageMeta({ layout: 'kambaz' })
 import { ref } from 'vue'
 import CourseCard from '~/components/kambaz/dashboard/CourseCard.vue'
+import * as client from '~/kambaz/courses/client'
+import * as enrollmentsClient from '~/kambaz/enrollments/client'
 import { emptyCourse, useCoursesStore, type Course } from '~/kambaz/store/coursesStore'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
 import { useEnrollmentsStore } from '~/kambaz/store/enrollmentsStore'
 
-// Published list comes from the store
+// The server is the source of truth; the store is a cache of what it last returned
 const store = useCoursesStore()
 const enrollments = useEnrollmentsStore()
 const { currentUser } = useAccountContext()
@@ -14,17 +16,55 @@ const { currentUser } = useAccountContext()
 // Enrollments button: false = only my courses, true = every course
 const showAllCourses = ref(false)
 
-// Nobody signed in or showing all: every course. Otherwise only enrolled courses.
-const visibleCourses = computed(() => {
+// Signed in: the server filters to my enrolled courses (or all, with the toggle).
+// Signed out: every course, so direct visits (including the autograder's) still see the list.
+const loadCourses = async () => {
   const user = currentUser.value
-  if (!user || showAllCourses.value) return store.courses
-  return store.courses.filter((c) => enrollments.isEnrolled(user._id, c._id))
-})
+  try {
+    store.setCourses(user && !showAllCourses.value ? await client.findMyCourses() : await client.fetchAllCourses())
+  } catch {
+    store.setCourses([])
+  }
+}
+// The cards' Enroll/Unenroll and Go state read the enrollments cache
+const loadEnrollments = async () => {
+  try {
+    enrollments.setEnrollments(await enrollmentsClient.fetchEnrollments())
+  } catch {
+    // Server unreachable: keep the cache as it was rather than mark it loaded-but-empty
+  }
+}
+onMounted(loadEnrollments)
+onMounted(loadCourses)
+// A different user signing in, or flipping the toggle, reloads from the server
+watch([currentUser, showAllCourses], loadCourses)
 
-// A new course enrolls its creator, so it shows up in "my courses" and can be opened
-function addCourse() {
-  const created = store.addCourse(course.value)
-  if (currentUser.value) enrollments.enroll(currentUser.value._id, created._id)
+const onAddCourse = async () => {
+  const { _id, ...newCourse } = course.value
+  const created = await client.createCourse(newCourse)
+  store.addCourse(created)
+  // The server enrolled the creator; refresh the cache so the new card shows as enrolled
+  if (currentUser.value) await loadEnrollments()
+}
+const onUpdateCourse = async () => {
+  const saved = await client.updateCourse(course.value)
+  store.updateCourse(saved)
+}
+const onDeleteCourse = async (courseId: string) => {
+  await client.deleteCourse(courseId)
+  store.deleteCourse(courseId)
+}
+const onToggleEnrollment = async (courseId: string) => {
+  const user = currentUser.value
+  if (!user) return
+  if (enrollments.isEnrolled(user._id, courseId)) {
+    await enrollmentsClient.unenrollFromCourse(user._id, courseId)
+    enrollments.removeEnrollment(user._id, courseId)
+    // "My courses" shows only enrolled courses, so drop it from that list
+    if (!showAllCourses.value) store.deleteCourse(courseId)
+  } else {
+    enrollments.addEnrollment(await enrollmentsClient.enrollIntoCourse(user._id, courseId))
+  }
 }
 
 // The form draft is one-screen UI state, so it stays local.
@@ -62,7 +102,7 @@ const setField = (field: 'number' | 'startDate', e: Event) => {
         id="wd-add-new-course-click"
         type="button"
         class="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white"
-        @click="addCourse"
+        @click="onAddCourse"
       >
         Add
       </button>
@@ -70,7 +110,7 @@ const setField = (field: 'number' | 'startDate', e: Event) => {
         id="wd-update-course-click"
         type="button"
         class="rounded bg-yellow-400 px-3 py-1.5 text-sm font-medium"
-        @click="store.updateCourse(course)"
+        @click="onUpdateCourse"
       >
         Update
       </button>
@@ -100,13 +140,13 @@ const setField = (field: 'number' | 'startDate', e: Event) => {
       @input="setField('startDate', $event)"
     />
     <hr />
-    <h2 id="wd-dashboard-published">Published Courses ({{ visibleCourses.length }})</h2>
+    <h2 id="wd-dashboard-published">Published Courses ({{ store.courses.length }})</h2>
     <hr />
     <div
       id="wd-dashboard-courses"
       class="grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
     >
-      <CourseCard v-for="c in visibleCourses" :key="c._id" :course="c" @edit="edit(c)" />
+      <CourseCard v-for="c in store.courses" :key="c._id" :course="c" @edit="edit(c)" @delete="onDeleteCourse(c._id)" @toggle-enrollment="onToggleEnrollment(c._id)" />
     </div>
   </div>
 </template>

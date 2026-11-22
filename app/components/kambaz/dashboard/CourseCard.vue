@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useCoursesStore, type Course } from '~/kambaz/store/coursesStore'
+import type { Course } from '~/kambaz/store/coursesStore'
 import { useEnrollmentsStore } from '~/kambaz/store/enrollmentsStore'
 import { useAccountContext } from '~/kambaz/account/AccountContext'
 
 const props = defineProps<{ course: Course }>()
 
-// Edit fills the Dashboard's local draft, so it goes up as an event (Vue's onEdit prop)
-const emit = defineEmits<{ edit: [] }>()
+// Edit fills the Dashboard's local draft and Delete goes through the server,
+// so both go up as events (Vue's onEdit / onDelete props)
+const emit = defineEmits<{ edit: []; delete: []; toggleEnrollment: [] }>()
 
-// Delete and enrollment go straight to the stores, so Dashboard doesn't pass them as props
-const store = useCoursesStore()
+// Enrollment status comes from the enrollments cache; changing it goes through the Dashboard
 const enrollments = useEnrollmentsStore()
 const { currentUser } = useAccountContext()
 
@@ -17,11 +17,6 @@ const enrolled = computed(
   () => !!currentUser.value && enrollments.isEnrolled(currentUser.value._id, props.course._id),
 )
 
-function toggleEnrollment() {
-  if (!currentUser.value) return
-  if (enrolled.value) enrollments.unenroll(currentUser.value._id, props.course._id)
-  else enrollments.enroll(currentUser.value._id, props.course._id)
-}
 
 // Same rule as the course layout: signed-out visitors can open any course,
 // a signed-in user only the ones they're enrolled in
@@ -66,7 +61,7 @@ function guardNavigation(event: MouseEvent) {
               id="wd-delete-course-click"
               type="button"
               class="inline-flex items-center justify-center rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white"
-              @click.prevent="store.deleteCourse(course._id)"
+              @click.prevent="emit('delete')"
             >
               Delete
             </button>
@@ -76,7 +71,7 @@ function guardNavigation(event: MouseEvent) {
                 id="wd-unenroll-course-click"
                 type="button"
                 class="inline-flex items-center justify-center rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white"
-                @click.prevent="toggleEnrollment"
+                @click.prevent="emit('toggleEnrollment')"
               >
                 Unenroll
               </button>
@@ -85,7 +80,7 @@ function guardNavigation(event: MouseEvent) {
                 id="wd-enroll-course-click"
                 type="button"
                 class="inline-flex items-center justify-center rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white"
-                @click.prevent="toggleEnrollment"
+                @click.prevent="emit('toggleEnrollment')"
               >
                 Enroll
               </button>

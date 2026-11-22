@@ -3,6 +3,7 @@ import { FaUserCircle } from 'vue3-icons/fa'
 import { emptyUser, useAccountContext, type User } from '~/kambaz/account/AccountContext'
 import { useUsersStore } from '~/kambaz/store/usersStore'
 import { useEnrollmentsStore } from '~/kambaz/store/enrollmentsStore'
+import * as enrollmentsClient from '~/kambaz/enrollments/client'
 
 definePageMeta({ layout: 'course' })
 
@@ -22,11 +23,11 @@ const isFaculty = computed(() => !currentUser.value || currentUser.value.role ==
 // The form starts from the shared emptyUser (always a copy, since v-model edits it)
 const person = ref<User>({ ...emptyUser })
 
-function addPerson() {
+async function addPerson() {
   if (!person.value.firstName.trim() && !person.value.lastName.trim()) return
   const created = usersStore.addUser(person.value)
-  enrollments.enroll(created._id, cid.value)
   person.value = { ...emptyUser }
+  enrollments.addEnrollment(await enrollmentsClient.enrollIntoCourse(created._id, cid.value))
 }
 </script>
 <template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import axios from 'axios'
+import * as client from '~/kambaz/account/client'
 import { emptyUser, useAccountContext } from '~/kambaz/account/AccountContext'
 
 definePageMeta({ layout: 'accounts' })
@@ -6,18 +8,22 @@ definePageMeta({ layout: 'accounts' })
 const username = ref('')
 const password = ref('')
 const verifyPassword = ref('')
+const errorMessage = ref<string | null>(null)
 const { setCurrentUser } = useAccountContext()
 
-function signup() {
+const signup = async () => {
   if (!username.value || !password.value) return
   if (password.value !== verifyPassword.value) return
-  setCurrentUser({
-    ...emptyUser,
-    _id: crypto.randomUUID(),
-    username: username.value,
-    password: password.value,
-  })
-  navigateTo('/account/profile')
+  try {
+    // emptyUser fills in the other fields so Profile has every property; the server assigns _id
+    const { _id, ...blank } = emptyUser
+    const current = await client.signup({ ...blank, username: username.value, password: password.value })
+    setCurrentUser(current)
+    navigateTo('/account/profile')
+  } catch (error) {
+    // 400 { message: 'Username already in use' } from the server
+    errorMessage.value = axios.isAxiosError(error) ? (error.response?.data?.message ?? error.message) : String(error)
+  }
 }
 </script>
 <template>
@@ -46,6 +52,9 @@ function signup() {
     />
     <p v-if="verifyPassword && password !== verifyPassword" class="mb-2 text-sm text-red-600">
       Passwords don't match.
+    </p>
+    <p v-if="errorMessage" id="wd-signup-error" class="mb-2 rounded bg-red-100 px-3 py-2 text-sm text-red-800">
+      {{ errorMessage }}
     </p>
     <button
       id="wd-signup-btn"

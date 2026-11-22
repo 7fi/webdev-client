@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import modulesJson from '../database/modules.json'
 
 export type Lesson = {
   _id: string
@@ -18,21 +17,18 @@ export type CourseModule = {
   editing?: boolean
 }
 
+// Modules live on the Express server; this store caches the current course's modules
 export const useModulesStore = defineStore('modules', () => {
-  // Copy the seed so edits never touch the imported JSON module
-  const modules = ref<CourseModule[]>((modulesJson as CourseModule[]).map((m) => ({ ...m })))
+  // Empty until the Modules page fetches a course's modules
+  const modules = ref<CourseModule[]>([])
 
-  const addModule = (module: { name: string; course: string }) => {
-    modules.value = [
-      ...modules.value,
-      {
-        _id: crypto.randomUUID(),
-        name: module.name,
-        description: '',
-        course: module.course,
-        lessons: [],
-      },
-    ]
+  // Replaces the cache with what the server returned
+  const setModules = (list: CourseModule[]) => {
+    modules.value = list
+  }
+  // Appends a module the server already created (it assigned the _id and course)
+  const addModule = (module: CourseModule) => {
+    modules.value = [...modules.value, module]
   }
   const deleteModule = (moduleId: string) => {
     modules.value = modules.value.filter((m) => m._id !== moduleId)
@@ -44,5 +40,5 @@ export const useModulesStore = defineStore('modules', () => {
     modules.value = modules.value.map((m) => (m._id === moduleId ? { ...m, editing: true } : m))
   }
 
-  return { modules, addModule, deleteModule, updateModule, editModule }
+  return { modules, setModules, addModule, deleteModule, updateModule, editModule }
 })
